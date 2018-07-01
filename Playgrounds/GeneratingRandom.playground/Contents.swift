@@ -1,14 +1,14 @@
 import Foundation
+import UIKit
 
-arc4random()
+arc4random() // 107985684
 
-drand48()
+drand48() // 0.3964647737602753
 
-arc4random_uniform(42)
+arc4random_uniform(10) // 4
 
 let number: Int
 number = Int(arc4random_uniform(42))
-
 
 let inputNumer: Int = 100
 let outputNumber: Int
@@ -32,6 +32,11 @@ extension Int {
             return 0
         }
     }
+}
+
+Int.random(-100) // return in range between -99 and 0
+
+extension Int {
     
     func random() -> Int {
         if n < 0 {
@@ -44,8 +49,6 @@ extension Int {
     }
 }
 
-Int.random(-100)
-
 65.random()
 
 func randomInRange(lowerBound: Int, upperBound: Int) -> Int {
@@ -57,7 +60,7 @@ func randomInRange(lowerBound: Int, upperBound: Int) -> Int {
 
 randomInRange(lowerBound: 20, upperBound: 30)
 
-func randomInRange(_ range: Range<Int>) -> Int {
+func randomInRange2(_ range: Range<Int>) -> Int {
     guard range.lowerBound < range.upperBound else {
         return range.lowerBound
     }
@@ -65,17 +68,16 @@ func randomInRange(_ range: Range<Int>) -> Int {
 }
 
 
-randomInRange(0..<100)
+randomInRange2(0..<100) // will return in range between 0 and 99 inclusive
 
-func randomInRange(_ range: ClosedRange<Int>) -> Int {
+func randomInRange3(_ range: ClosedRange<Int>) -> Int {
     guard range.lowerBound < range.upperBound else {
         return range.lowerBound
     }
     return range.lowerBound + Int(arc4random_uniform(UInt32(range.upperBound - range.lowerBound + 1)))
 }
 
-
-randomInRange(0...100)
+randomInRange3(0...100) // will return in range between 0 and 100 inclusive
 
 extension Range where Bound == Int {
     
@@ -93,28 +95,35 @@ extension Range where Bound == Int {
 (0..<123).random
 (-500..<500).random
 
-func generateArrayOfNumbers(count: Int) -> [Int] {
+func generateArrayOfNumbers(count: Int, upperBound: Int) -> [Int] {
     var result = [Int]()
     for _ in 0..<count {
-        result.append(Int(arc4random_uniform(100) + 1))
+        result.append(Int.random(upperBound))
     }
     return result
 }
 
-func generateArrayOfNumbers(count: Int, range: Range<Int>) -> [Int] {
-    var result = [Int]()
-    for _ in 0..<count {
-        result.append(range.random)
-    }
-    return result
-}
-
-generateArrayOfNumbers(count: 10, range: 0..<10)
-
-var randomArray = (1...10).map { _ in Int(arc4random_uniform(100)) }
-randomArray = (1..<10).map { _ in Int(arc4random_uniform(100)) }
+generateArrayOfNumbers(count: 10, upperBound: 100)
 
 func uniqueRandomArray(count: Int, min: Int, max: Int) -> [Int] {
+    guard count <= (max - min + 1) else {
+        return []
+    }
+    var numbers = [Int]()
+    for _ in 1...count {
+        var random: Int
+        repeat {
+            random = min + Int(arc4random_uniform(UInt32(max - min + 1)))
+        } while numbers.contains(random)
+        numbers.append(random)
+    }
+    return numbers
+    
+}
+
+var randomArray = uniqueRandomArray(count: 10, min: 15, max: 55)
+
+func uniqueRandomArray2(count: Int, min: Int, max: Int) -> [Int] {
     guard count <= (max - min + 1) else {
         return []
     }
@@ -126,48 +135,41 @@ func uniqueRandomArray(count: Int, min: Int, max: Int) -> [Int] {
     return Array(numbers)
 }
 
-randomArray = uniqueRandomArray(count: 50, min: 11, max: 99)
+var randomArray2 = uniqueRandomArray(count: 50, min: 11, max: 99)
 
-func uniqueRandomArray2(count: Int, min: Int, max: Int) -> [Int] {
-    guard count <= (max - min + 1) else {
-        return []
-    }
-    var numbers = [Int]()
-    for i in 1...count {
-        var random: Int
-        repeat {
-            random = min + Int(arc4random_uniform(UInt32(max - min + 1)))
-            print(i)
-        } while numbers.contains(random)
-        numbers.append(random)
-    }
-    return numbers
+let redComponent = CGFloat(arc4random_uniform(255)) / 255.0
+let greenComponent = CGFloat(arc4random_uniform(255)) / 255.0
+let blueComponent = CGFloat(arc4random_uniform(255)) / 255.0
 
+let randomColor = UIColor(red: redComponent, green: greenComponent,
+                          blue: blueComponent, alpha: 1.0)
+
+func randomColor(randomAlpha: Bool = false) -> UIColor {
+    let redComponent = CGFloat(arc4random_uniform(255)) / 255.0
+    let greenComponent = CGFloat(arc4random_uniform(255)) / 255.0
+    let blueComponent = CGFloat(arc4random_uniform(255)) / 255.0
+    let alphaComponent = randomAlpha ? CGFloat(arc4random_uniform(255)) / 255.0 : 1
+    let randomColor = UIColor(red: redComponent, green: greenComponent,
+                              blue: blueComponent, alpha: alphaComponent)
+    return randomColor
 }
 
-randomArray = uniqueRandomArray2(count: 10, min: 1, max: 10)
+let randomColor2 = randomColor(randomAlpha: false)
 
-
-func uniqueRandomArray3(count: Int, min: Int, max: Int) -> [Int] {
-    guard count <= (max - min + 1) else {
-        return []
+extension UIColor {
+    class func random(randomAlpha: Bool = false) -> UIColor {
+        let redComponent = CGFloat(arc4random_uniform(255)) / 255.0
+        let greenComponent = CGFloat(arc4random_uniform(255)) / 255.0
+        let blueComponent = CGFloat(arc4random_uniform(255)) / 255.0
+        let alphaComponent = randomAlpha ? CGFloat(arc4random_uniform(255)) / 255.0 : 1
+        let randomColor = UIColor(red: redComponent, green: greenComponent,
+                                  blue: blueComponent, alpha: alphaComponent)
+        return randomColor
     }
-    var numbers = Array(min...max)
-    var randoms = [Int]()
-    for _ in 1...count {
-        let index = Int(arc4random_uniform(UInt32(numbers.count)))
-        let value = numbers[index]
-        randoms.append(value)
-        numbers.remove(at: index)
-    }
-    return randoms
 }
 
-uniqueRandomArray3(count: 10, min: 1, max: 10)
+UIColor.random()
 
-
-
-
-
-
-
+let array = ["Star", "Wars", "Empire", "Strikes", "Back"]
+let randomIndex = Int(arc4random_uniform(UInt32(array.count)))
+print(array[randomIndex])
